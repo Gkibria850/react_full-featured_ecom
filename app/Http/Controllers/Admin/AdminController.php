@@ -65,23 +65,14 @@ class AdminController extends Controller
         return Inertia::render('Admin/Admins/Create');
     }
 
-    public function store(AdminStoreRequest $request): RedirectResponse
+   public function store(AdminStoreRequest $request): RedirectResponse
 {
-    $data = $request->only(
-        'name',
-        'username',
-        'email',
-        'avatar',
-        'phone',
-        'address',
-        'password'
-    );
+    $data = $request->only('name', 'username', 'email', 'phone', 'address', 'password');
 
     if ($request->hasFile('avatar')) {
-        $path = $request->file('avatar')->store('avatars', 'public');
-        $data['avatar'] = $path;
-    }
-
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar'] = $path;
+        }
     $data['password'] = Hash::make($request->password);
     $data['role'] = 'admin';
     
@@ -89,47 +80,35 @@ class AdminController extends Controller
 
     return redirect()->route('admin.admins.index')->with('success', 'Admin created successfully.');
 }
+
 public function edit($id): Response
 {
     $admin= User::findOrFail($id);
+    $admin->avatar = asset('storage/'.$admin->avatar);
     return Inertia::render('Admin/Admins/Edit', [
         'admin' => $admin,
     ]);
 }
 public function update(AdminUpdateRequest $request, User $admin): RedirectResponse
 {
-    $data = $request->only(
-        'name',
-        'username',
-        'email',
-        'phone',
-        'address'
-    );
+    $data = $request->only('name','email', 'phone', 'address');
 
-    // Handle avatar upload
-    if ($request->hasFile('avatar')) {
-        // Delete old avatar if exists
-        if ($admin->avatar && file_exists(public_path($admin->avatar))) {
-            unlink(public_path($admin->avatar));
-        }
-
-        // Upload new image
-        $path = ImageUploader::uploadImage($request->file('avatar'), 'avatars');
-        $data['avatar'] = $path;
+   if ($request->hasFile('avatar')) {
+    // Delete old image if exists
+    if ($admin->avatar) {
+        ImageUploader::deleteImage('storage/' . $admin->avatar);
     }
 
-    // Handle password update if provided
-    if ($request->filled('password')) {
-        $data['password'] = Hash::make($request->password);
-    }
+    // Store new avatar in "public/avatars"
+    $path = $request->file('avatar')->store('avatars', 'public'); // saves in storage/app/public/avatars
+    $data['avatar'] = $path; // saves relative path: "avatars/filename.jpg"
+}
 
-    // Update admin
     $admin->update($data);
 
-    return redirect()
-        ->route('admin.admins.index')
-        ->with('success', 'Admin updated successfully.');
+    return redirect()->route('admin.admins.index')->with('success', 'Admin updated successfully.');
 }
+
 
 public  function destroy($id):RedirectResponse
 {

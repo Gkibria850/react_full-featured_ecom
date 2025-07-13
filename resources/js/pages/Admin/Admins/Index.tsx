@@ -13,7 +13,7 @@ export default function AdminsIndex() {
       label: '#',
       sortable: false,
       type: 'IndexColum',
-      width: '80px',
+      width: '50px',
       render: (_item: any, index: number) => {
         return (filters.page - 1) * filters.perPage + (index + 1);
       },
@@ -24,12 +24,12 @@ export default function AdminsIndex() {
       sortable: true,
       type: 'text',
     },
-    {
-      key: 'username',
-      label: 'Username',
-      sortable: true,
-      type: 'text',
-    },
+    // {
+    //   key: 'username',
+    //   label: 'Username',
+    //   sortable: true,
+    //   type: 'text',
+    // },
     {
       key: 'email',
       label: 'Email',
@@ -52,8 +52,8 @@ export default function AdminsIndex() {
   key: 'avatar',
   label: 'Avatar',
   sortable: false,
-  width: '80px',
-  height: '80px',
+  width: '50px',
+  height: '50px',
   render: (item: any) => {
     return item.avatar ? (
       <img

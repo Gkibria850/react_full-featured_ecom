@@ -13,7 +13,7 @@ class ImageUploader
         try {
             $folder = trim($folder, '/');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path("uploads/{$folder}");
+            $destinationPath = public_path("avatars/{$folder}");
 
             // Create directory if it doesn't exist
             if (!is_dir($destinationPath)) {
@@ -36,7 +36,7 @@ class ImageUploader
             // Save image
             $img->save("{$destinationPath}/{$imageName}");
 
-            return "uploads/{$folder}/{$imageName}";
+            return "avatars/{$folder}/{$imageName}";
         } catch (\Exception $e) {
             throw new \RuntimeException('Image upload failed: ' . $e->getMessage());
         }
