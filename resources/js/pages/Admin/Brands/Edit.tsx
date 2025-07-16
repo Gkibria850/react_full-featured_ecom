@@ -5,48 +5,36 @@ import { Label } from "@/components/ui/label";
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem } from "@/types";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Save, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
-
+import { Textarea } from "@headlessui/react"; // ✅ Corrected
 const breadcrumbs: BreadcrumbItem[] = [
   { title: "Dashboard", href: "dashboard" },
-  { title: "Categories", href: route("admin.categories.index") },
-  { title: "Edit Category", href: "" },
+  { title: "Brands", href: route("admin.brands.index") },
+  { title: "Edit Brand", href: "" },
 ];
 
-interface Category {
+interface Brand {
   id: number;
   name: string;
   slug: string;
   description: string;
-  des_short: string;
-  parent_id: number | null;
   image: string | null;
   status: string;
 }
 
-interface CategoryWithPath {
-  id: number;
-  name: string;
-  path: string;
-  level: number;
-}
-
-export default function Edit({ category, parents }: { category: Category; parents: CategoryWithPath[] }) {
+export default function Edit({ brand }: { brand: Brand }) {
   const { data, setData, post, processing, errors } = useForm({
     _method: 'put',
-    name: category.name,
-    slug: category.slug,
-    description: category.description || '',
-    des_short: category.des_short || '',
-    parent_id: category.parent_id ?? '',
-    status: category.status.toString(),
+    name: brand.name,
+    slug: brand.slug,
+    description: brand.description || '',
+    status: brand.status.toString(),
     image: null as File | null,
   });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(category.image || null);
+  const [imagePreview, setImagePreview] = useState<string | null>(brand.image || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -55,7 +43,7 @@ export default function Edit({ category, parents }: { category: Category; parent
     e.preventDefault();
     setIsUploading(true);
 
-    post(route("admin.categories.update", category.id), {
+    post(route("admin.brands.update", brand.id), {
       forceFormData: true,
       preserveScroll: true,
       onProgress: (progress) => {
@@ -95,23 +83,23 @@ export default function Edit({ category, parents }: { category: Category; parent
   };
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs} title="Edit Category">
-       <Head title="Create Category" />
-       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8 dark:from-gray-900 dark:to-gray-800">
-         <Card className="overflow-hidden border-none bg-white shadow-xl dark:bg-gray-800">
-           <CardHeader className="flex flex-row items-center justify-between">
-             <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-               Edit Category
-             </h2>
-             <Link
-               href={route("admin.categories.index")}
-               className="inline-flex items-center text-sm text-blue-600 hover:underline dark:text-blue-400"
-             >
-               <ArrowLeft className="mr-1 h-4 w-4" />
-               Back to List
-             </Link>
-           </CardHeader>
-           <CardContent>
+    <AppLayout breadcrumbs={breadcrumbs} title="Edit Brand">
+      <Head title="Edit Brand" />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8 dark:from-gray-900 dark:to-gray-800">
+        <Card className="overflow-hidden border-none bg-white shadow-xl dark:bg-gray-800">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              Edit Brand
+            </h2>
+            <Link
+              href={route("admin.brands.index")}
+              className="inline-flex items-center text-sm text-blue-600 hover:underline dark:text-blue-400"
+            >
+              <ArrowLeft className="mr-1 h-4 w-4" />
+              Back to List
+            </Link>
+          </CardHeader>
+          <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name */}
               <div>
@@ -120,23 +108,35 @@ export default function Edit({ category, parents }: { category: Category; parent
                 {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
               </div>
 
+              {/* Slug */}
+              {/* <div>
+                <Label htmlFor="slug">Slug</Label>
+                <Input id="slug" value={data.slug} onChange={(e) => setData("slug", e.target.value)} />
+                {errors.slug && <p className="text-sm text-red-500">{errors.slug}</p>}
+              </div> */}
+
              
 
-              {/* Description */}
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <input id="description" value={data.description} onChange={(e) => setData("description", e.target.value)} />
+               {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                  <FileText size={14} className="text-primary dark:text-primary-light" />
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={data.description}
+                  onChange={(e) => setData("description", e.target.value)}
+                  className="focus:border-primary focus:ring-primary/20 dark:focus:border-primary-light 
+                  dark:focus:ring-primary-light/20 min-h-24 w-full rounded-lg border border-gray-200 bg-white/20 p-4 text-base text-gray-900 shadow-sm backdrop-blur-sm 
+                  transition-all focus:ring-2 dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-200"
+                  placeholder="Enter brand description"
+                />
                 {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
               </div>
 
-              {/* Short Description */}
-              <div>
-                <Label htmlFor="des_short">Short Description</Label>
-                <Input id="des_short" value={data.des_short} onChange={(e) => setData("des_short", e.target.value)} />
-                {errors.des_short && <p className="text-sm text-red-500">{errors.des_short}</p>}
-              </div>
-
-              {/* Status */}
+            {/* Status */}
               <div>
                 <Label htmlFor="status">Status</Label>
                 <select
@@ -146,28 +146,9 @@ export default function Edit({ category, parents }: { category: Category; parent
                   className="w-full rounded border p-2 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="0">Active</option>
-                  <option value="1">Deactive</option>
+                  <option value="1">Inactive</option>
                 </select>
                 {errors.status && <p className="text-sm text-red-500">{errors.status}</p>}
-              </div>
-
-              {/* Parent Category */}
-              <div>
-                <Label htmlFor="parent_id">Parent Category</Label>
-                <select
-                  id="parent_id"
-                  value={data.parent_id ?? ''}
-                  onChange={(e) => setData("parent_id", e.target.value === '' ? null : Number(e.target.value))}
-                  className="w-full rounded border p-2 dark:bg-gray-700 dark:text-white"
-                >
-                  <option value="">-- No Parent --</option>
-                  {parents.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {" ".repeat(category.level * 2)}{category.level > 0 && "↳ "}{category.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.parent_id && <p className="text-sm text-red-500">{errors.parent_id}</p>}
               </div>
 
               {/* Image */}
@@ -192,6 +173,7 @@ export default function Edit({ category, parents }: { category: Category; parent
                 {errors.image && <p className="text-sm text-red-500">{errors.image}</p>}
               </div>
 
+              {/* Upload Progress */}
               {isUploading && (
                 <div>
                   <Progress value={uploadProgress} />
@@ -202,7 +184,7 @@ export default function Edit({ category, parents }: { category: Category; parent
               {/* Submit */}
               <Button type="submit" disabled={processing}>
                 <Save className="mr-2 h-4 w-4" />
-                Update Category
+                Update Brand
               </Button>
             </form>
           </CardContent>

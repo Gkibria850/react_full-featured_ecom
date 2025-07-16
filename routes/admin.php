@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\BrandController;
 use App\Models\Category;
 
 ;
@@ -18,6 +19,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
  'users' =>UserController::class,
  'admins' =>AdminController::class,
  'categories' =>CategoryController::class,
+ 'brands' =>BrandController::class,
 
    ]);
 });

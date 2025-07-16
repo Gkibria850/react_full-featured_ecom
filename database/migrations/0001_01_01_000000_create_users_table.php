@@ -27,6 +27,9 @@ return new class extends Migration
             $table->enum('role', ['admin', 'user', 'seller'])->default('user');
             $table->enum('status', ['active', 'inactive'])->default('active');
 
+            $table->unsignedBigInteger('created_by_id');
+            $table->unsignedBigInteger('edited_by_id');
+
             $table->rememberToken();
             $table->timestamps();
         });

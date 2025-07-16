@@ -24,6 +24,11 @@ const mainNavItems: NavItem[] = [
         icon: User,
     },
     {
+        title: 'Brand',
+        href: '/admin/brands',
+        icon: TagIcon,
+    },
+    {
         title: 'Category',
         href: '/admin/categories',
         icon: TagIcon,

@@ -48,7 +48,8 @@ class ImageUploader
      * @param string $path
      * @return bool
      */
-    public static function deleteImage(string $path): bool
+    //public static function deleteImage(string $path): bool
+    public static function deleteImage($path): bool
     {
         try {
             $fullPath = public_path($path);
